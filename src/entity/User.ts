@@ -27,7 +27,7 @@ export class User {
 	@JoinColumn({ name: "avatarId" })
 	avatar: Avatar;
 
-	@Column()
+	@Column({ nullable: true, default: 0 })
 	diamond: number;
 
 	@CreateDateColumn({ type: "timestamp with time zone" })

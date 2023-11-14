@@ -2,6 +2,7 @@ import { AppDataSource } from "./data-source";
 import * as express from "express";
 import * as cors from "cors";
 import AvaRouter from "./routes/Avatars";
+import UserRouter from "./routes/Users";
 
 AppDataSource.initialize()
 	.then(async () => {
@@ -19,6 +20,7 @@ AppDataSource.initialize()
 		app.use(express.json());
 		app.use(cors(options));
 		app.use("/api", AvaRouter);
+		app.use("/api", UserRouter);
 
 		app.listen(port, () => `Server running on port ${port}`);
 	})
