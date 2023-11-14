@@ -10,5 +10,7 @@ AvaRouter.post(
 	AvatarControllers.create
 );
 AvaRouter.get("/avatars", AvatarControllers.find);
+AvaRouter.get("/avatar/:id", AvatarControllers.findById);
+AvaRouter.delete("/avatar/:id", AvatarControllers.delete);
 
 export default AvaRouter;

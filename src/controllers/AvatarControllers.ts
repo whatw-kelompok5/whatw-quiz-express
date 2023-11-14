@@ -8,4 +8,10 @@ export default new (class AvatarControllers {
 	create(req: Request, res: Response) {
 		AvatarServices.create(req, res);
 	}
+	findById(req: Request, res: Response) {
+		AvatarServices.findById(req, res);
+	}
+	delete(req: Request, res: Response) {
+		AvatarServices.delete(req, res);
+	}
 })();

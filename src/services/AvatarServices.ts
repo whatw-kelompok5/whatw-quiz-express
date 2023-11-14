@@ -55,4 +55,15 @@ export default new (class AvatarServices {
 			return res.status(500).json(error);
 		}
 	}
+
+	async delete(req: Request, res: Response): Promise<Response> {
+		try {
+			const avatar = await this.AvaRepository.delete({
+				id: parseInt(req.params.id),
+			});
+			return res.status(200).json(avatar);
+		} catch (error) {
+			return res.status(500).json(error);
+		}
+	}
 })();
