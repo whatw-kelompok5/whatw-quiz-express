@@ -1,4 +1,4 @@
-# Awesome Project Build with TypeORM
+# What Happen Around The World
 
 Steps to run this project:
 
