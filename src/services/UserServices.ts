@@ -13,6 +13,17 @@ class UserServices {
 	private readonly AvaRepository: Repository<Avatar> =
 		AppDataSource.getRepository(Avatar);
 
+	async find(req: Request, res: Response): Promise<Response> {
+		try {
+			const user = await this.UserRepository.find({
+				relations: ["avatar"],
+			});
+			return res.status(200).json({ code: 200, data: user });
+		} catch (error) {
+			return res.status(500).json(error);
+		}
+	}
+
 	async register(req: Request, res: Response): Promise<Response> {
 		try {
 			const { fullname, email, avatar } = req.body;
