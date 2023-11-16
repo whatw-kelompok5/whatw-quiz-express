@@ -3,10 +3,10 @@ import { DataSource } from "typeorm";
 
 export const AppDataSource = new DataSource({
 	type: "postgres",
-	host: "ep-bold-grass-13341484.ap-southeast-1.aws.neon.tech",
+	host: "ep-plain-sun-74387267.ap-southeast-1.aws.neon.tech",
 	port: 5432,
 	username: "roubilibo",
-	password: "NbYgS63ToCBh",
+	password: "aiMI3fnq8Kbc",
 	database: "db_quiz_whatw",
 	synchronize: true,
 	logging: false,
