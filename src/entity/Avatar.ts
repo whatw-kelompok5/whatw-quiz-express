@@ -16,7 +16,7 @@ export class Avatar {
 	@Column()
 	image: string;
 
-	@Column()
+	@Column({ nullable: true, default: 0 })
 	price: number;
 
 	@OneToMany(() => User, (user) => user.avatar)

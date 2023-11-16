@@ -6,4 +6,5 @@ export const createAvatarSchema = Joi.object({
 export const createUserSchema = Joi.object({
 	fullname: Joi.string().required(),
 	email: Joi.string().required(),
+	avatar: Joi.number().required(),
 });

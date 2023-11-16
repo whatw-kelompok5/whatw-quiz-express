@@ -20,9 +20,10 @@ export class User {
 	@Column()
 	email: string;
 
-	@ManyToOne(() => Avatar, (avatar) => avatar.id, {
+	@ManyToOne(() => Avatar, (avatar) => avatar.users, {
 		onDelete: "SET NULL",
 		onUpdate: "SET NULL",
+		nullable: true,
 	})
 	@JoinColumn({ name: "avatarId" })
 	avatar: Avatar;

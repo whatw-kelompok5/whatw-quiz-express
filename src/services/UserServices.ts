@@ -4,15 +4,23 @@ import { AppDataSource } from "../data-source";
 import { Request, Response } from "express";
 import { createUserSchema } from "../utils/validator/Validate";
 import * as jwt from "jsonwebtoken";
+import { Avatar } from "../entity/Avatar";
 
 class UserServices {
 	private readonly UserRepository: Repository<User> =
 		AppDataSource.getRepository(User);
 
+	private readonly AvaRepository: Repository<Avatar> =
+		AppDataSource.getRepository(Avatar);
+
 	async register(req: Request, res: Response): Promise<Response> {
 		try {
-			const { fullname, email } = req.body;
-			const { error, value } = createUserSchema.validate({ fullname, email });
+			const { fullname, email, avatar } = req.body;
+			const { error, value } = createUserSchema.validate({
+				fullname,
+				email,
+				avatar,
+			});
 			if (error) {
 				return res.status(400).json({ error: error.details[0].message });
 			}
@@ -27,13 +35,22 @@ class UserServices {
 				return res.status(400).json({ error, message: "Email already exist" });
 			}
 
+			const selectAvatar = await this.AvaRepository.findOneBy({
+				id: value.avatar,
+			});
+
+			if (!selectAvatar) {
+				return res.status(400).json({ error, message: "Avatar not found" });
+			}
+
 			const user = this.UserRepository.create({
 				fullname: value.fullname,
 				email: value.email,
+				avatar: selectAvatar,
 			});
 
 			const createUser = await this.UserRepository.save(user);
-			return res.status(200).json(createUser);
+			return res.status(200).json({ code: 200, data: createUser });
 		} catch (error) {
 			return res.status(400).json({ error });
 		}
@@ -62,6 +79,7 @@ class UserServices {
 			});
 
 			return res.status(200).json({
+				code: 200,
 				user: userSelected,
 				token: token,
 			});
