@@ -48,8 +48,8 @@ using body form-data with post request
 
 ```
 key-------------------
-image *file*
-price *text*
+image * file *
+price * text *
 ```
 
 **get all avatars**
