@@ -13,6 +13,7 @@ export default new (class AvatarServices {
 	async find(req: Request, res: Response): Promise<Response> {
 		try {
 			const avatar = await this.AvaRepository.find();
+
 			return res.status(200).json(avatar);
 		} catch (error) {
 			return res.status(500).json(error);

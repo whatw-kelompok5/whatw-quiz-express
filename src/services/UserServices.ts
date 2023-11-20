@@ -98,6 +98,31 @@ class UserServices {
 			return res.status(400).json({ error });
 		}
 	}
+
+	async update(req: Request, res: Response): Promise<Response> {
+		try {
+			const { fullname, avatar } = req.body;
+			const selectUser = await this.UserRepository.findOne({
+				where: { id: res.locals.loginSession.user.id },
+			});
+			console.log(res.locals.loginSession.user.id);
+			const selectAvatar = await this.AvaRepository.findOneBy({
+				id: avatar,
+			});
+			if (!selectAvatar) {
+				return res
+					.status(400)
+					.json({ error: 400, message: "Avatar not found" });
+			}
+
+			selectUser.avatar = selectAvatar;
+			selectUser.fullname = fullname;
+			const updateUser = await this.UserRepository.save(selectUser);
+			return res.status(200).json({ code: 200, data: updateUser });
+		} catch (error) {
+			return res.status(400).json({ error });
+		}
+	}
 }
 
 export default new UserServices();

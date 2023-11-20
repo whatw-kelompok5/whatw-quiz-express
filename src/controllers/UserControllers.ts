@@ -13,6 +13,9 @@ class UserControllers {
 	find(req: Request, res: Response) {
 		UserServices.find(req, res);
 	}
+	update(req: Request, res: Response) {
+		UserServices.update(req, res);
+	}
 }
 
 export default new UserControllers();
