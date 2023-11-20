@@ -16,6 +16,9 @@ class UserControllers {
 	update(req: Request, res: Response) {
 		UserServices.update(req, res);
 	}
+	check(req: Request, res: Response) {
+		UserServices.check(req, res);
+	}
 }
 
 export default new UserControllers();

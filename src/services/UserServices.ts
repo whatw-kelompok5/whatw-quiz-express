@@ -80,12 +80,12 @@ class UserServices {
 				return res.status(400).json({ error: "invalid user" });
 			}
 
-			const user = this.UserRepository.create({
-				fullname: fullname,
-				email: email,
-			});
+			// const user = this.UserRepository.create({
+			// 	fullname: fullname,
+			// 	email: email,
+			// });
 
-			const token = jwt.sign({ user }, "whatw-quiz", {
+			const token = jwt.sign({ id: userSelected.id }, "whatw-quiz", {
 				expiresIn: "1d",
 			});
 
@@ -102,10 +102,11 @@ class UserServices {
 	async update(req: Request, res: Response): Promise<Response> {
 		try {
 			const { fullname, avatar } = req.body;
+			const loginSession = res.locals.loginSession;
 			const selectUser = await this.UserRepository.findOne({
-				where: { id: res.locals.loginSession.user.id },
+				where: { id: loginSession.id },
 			});
-			console.log(res.locals.loginSession.user.id);
+			// console.log(res.locals.loginSession.id);
 			const selectAvatar = await this.AvaRepository.findOneBy({
 				id: avatar,
 			});
@@ -121,6 +122,19 @@ class UserServices {
 			return res.status(200).json({ code: 200, data: updateUser });
 		} catch (error) {
 			return res.status(400).json({ error });
+		}
+	}
+
+	async check(req: Request, res: Response): Promise<Response> {
+		try {
+			const loginSession = res.locals.loginSession;
+			const user = await this.UserRepository.findOne({
+				where: { id: loginSession.id },
+			});
+			// console.log(res.locals.loginSession.id);
+			return res.status(200).json({ user, message: "You are logged in" });
+		} catch (error) {
+			return res.status(400).json({ error: "Unauthorized" });
 		}
 	}
 }
