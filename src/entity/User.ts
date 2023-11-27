@@ -6,6 +6,7 @@ import {
 	UpdateDateColumn,
 	ManyToOne,
 	JoinColumn,
+	ManyToMany,
 } from "typeorm";
 import { Avatar } from "./Avatar";
 
@@ -27,6 +28,9 @@ export class User {
 	})
 	@JoinColumn({ name: "avatarId" })
 	avatar: Avatar;
+
+	@ManyToMany(() => Avatar, (avatar) => avatar.avatar_owners)
+	avatars_owned: Avatar[];
 
 	@Column({ nullable: true, default: 0 })
 	diamond: number;
