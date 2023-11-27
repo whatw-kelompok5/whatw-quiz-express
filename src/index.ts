@@ -22,6 +22,8 @@ AppDataSource.initialize()
 		app.use("/api", AvaRouter);
 		app.use("/api", UserRouter);
 
-		app.listen(port, () => `Server running on port ${port}`);
+		app.listen(port, () => {
+			console.log(`Server is running on port ${port}`);
+		});
 	})
 	.catch((error) => console.log(error));

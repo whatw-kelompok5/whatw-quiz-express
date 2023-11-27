@@ -83,6 +83,7 @@ export default new (class AvatarServices {
 					},
 				},
 			});
+
 			return res.status(200).json({
 				code: 200,
 				status: "succes",
