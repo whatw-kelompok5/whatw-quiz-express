@@ -14,4 +14,7 @@ export default new (class AvatarControllers {
 	delete(req: Request, res: Response) {
 		AvatarServices.delete(req, res);
 	}
+	userFindAvatars(req: Request, res: Response) {
+		AvatarServices.userFindAvatars(req, res);
+	}
 })();

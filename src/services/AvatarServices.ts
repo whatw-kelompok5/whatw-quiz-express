@@ -67,4 +67,47 @@ export default new (class AvatarServices {
 			return res.status(500).json(error);
 		}
 	}
+
+	async userFindAvatars(req: Request, res: Response): Promise<Response> {
+		try {
+			const avatars: Avatar[] = await this.AvaRepository.find({
+				order: {
+					id: "ASC",
+				},
+				relations: ["avatar_owners"],
+				select: {
+					avatar_owners: {
+						id: true,
+						fullname: true,
+						email: true,
+					},
+				},
+			});
+			return res.status(200).json({
+				code: 200,
+				status: "succes",
+				data: avatars.map((avatar) => {
+					let owned = false;
+
+					if (avatar.price === 0) {
+						owned = true;
+					} else {
+						owned = Boolean(
+							avatar.avatar_owners.filter(
+								(owner) => owner.id === res.locals.loginSession.id
+							).length
+						);
+					}
+					return {
+						id: avatar.id,
+						image: avatar.image,
+						price: avatar.price,
+						owned,
+					};
+				}),
+			});
+		} catch (error) {
+			return res.status(500).json(error);
+		}
+	}
 })();

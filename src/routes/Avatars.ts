@@ -1,6 +1,7 @@
 import { Router } from "express";
 import AvatarControllers from "../controllers/AvatarControllers";
 import uploadImage from "../middlewares/uploadImage";
+import Auth from "../middlewares/Auth";
 
 const AvaRouter = Router();
 
@@ -12,5 +13,6 @@ AvaRouter.post(
 AvaRouter.get("/avatars", AvatarControllers.find);
 AvaRouter.get("/avatar/:id", AvatarControllers.findById);
 AvaRouter.delete("/avatar/:id", AvatarControllers.delete);
+AvaRouter.get("/avatars", Auth.authenticate, AvatarControllers.userFindAvatars);
 
 export default AvaRouter;
