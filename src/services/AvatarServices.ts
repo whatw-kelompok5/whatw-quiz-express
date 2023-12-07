@@ -5,10 +5,13 @@ import { Request, Response } from "express";
 import { createAvatarSchema } from "../utils/validator/Validate";
 import { uploadToCloudinary } from "../utils/cloudinary/Cloudinary";
 import { deleteFile } from "../utils/cloudinary/FileHelper";
+import { User } from "../entity/User";
 
 export default new (class AvatarServices {
 	private readonly AvaRepository: Repository<Avatar> =
 		AppDataSource.getRepository(Avatar);
+	private readonly UserRepository: Repository<User> =
+		AppDataSource.getRepository(User);
 
 	async find(req: Request, res: Response): Promise<Response> {
 		try {
@@ -109,6 +112,47 @@ export default new (class AvatarServices {
 			});
 		} catch (error) {
 			return res.status(500).json(error);
+		}
+	}
+	async userBuyAvatar(req: Request, res: Response): Promise<Response> {
+		try {
+			const { avatarId } = req.body;
+
+			const avatar = await this.AvaRepository.findOne({
+				where: { id: avatarId },
+			});
+
+			const user = await this.UserRepository.findOne({
+				where: { id: res.locals.loginSession.id },
+				relations: ["avatar", "avatars_owned"],
+			});
+
+			if (!user || !avatar) {
+				return res
+					.status(400)
+					.json({ success: false, message: "User or avatar not found" });
+			}
+
+			// Lakukan pengecekan dan operasi pembelian di sini
+			if (user.diamond < avatar.price) {
+				return res.status(400).json({
+					success: false,
+					message: "Insufficient funds to purchase the avatar",
+				});
+			}
+
+			// Lakukan operasi pembelian
+			user.diamond -= avatar.price;
+			user.avatars_owned.push(avatar);
+
+			// Simpan perubahan ke basis data
+			await this.UserRepository.save(user);
+
+			return res
+				.status(200)
+				.json({ success: true, message: "Avatar purchased successfully" });
+		} catch (error) {
+			return res.status(500).json({ success: false, message: error.message });
 		}
 	}
 })();

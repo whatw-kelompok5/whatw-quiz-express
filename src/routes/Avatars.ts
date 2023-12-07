@@ -18,5 +18,10 @@ AvaRouter.get(
 	Auth.authenticate,
 	AvatarControllers.userFindAvatars
 );
+AvaRouter.post(
+	"/user/buyavatar",
+	Auth.authenticate,
+	AvatarControllers.userBuyAvatar
+);
 
 export default AvaRouter;

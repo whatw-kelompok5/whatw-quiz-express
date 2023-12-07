@@ -17,4 +17,7 @@ export default new (class AvatarControllers {
 	userFindAvatars(req: Request, res: Response) {
 		AvatarServices.userFindAvatars(req, res);
 	}
+	userBuyAvatar(req: Request, res: Response) {
+		AvatarServices.userBuyAvatar(req, res);
+	}
 })();
