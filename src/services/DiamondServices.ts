@@ -26,7 +26,9 @@ export default new (class DiamondServices {
 				where: { id: res.locals.loginSession.id },
 			});
 			if (!user) {
-				throw new Error("User not found");
+				return res
+					.status(400)
+					.json({ success: false, message: "User not found" });
 			}
 
 			// Temukan diamond berdasarkan ID
@@ -34,7 +36,9 @@ export default new (class DiamondServices {
 				where: { id: req.body.diamondId },
 			});
 			if (!diamond) {
-				throw new Error("Diamond not found");
+				return res
+					.status(400)
+					.json({ success: false, message: "Diamond Package not found" });
 			}
 
 			// Hitung total harga pembelian
