@@ -6,6 +6,7 @@ import { Server } from "socket.io";
 import SocketServices from "./services/SocketServices";
 import AvaRouter from "./routes/Avatars";
 import UserRouter from "./routes/Users";
+import DiaRouter from "./routes/Diamonds";
 
 AppDataSource.initialize()
 	.then(async () => {
@@ -32,6 +33,7 @@ AppDataSource.initialize()
 		//! Routes
 		app.use("/api", AvaRouter);
 		app.use("/api", UserRouter);
+		app.use("/api", DiaRouter);
 
 		server.listen(port, () => {
 			console.log(`Server is running on port ${port}`);
