@@ -27,44 +27,44 @@ export default new (class DiamondServices {
 			return res.status(500).json(error);
 		}
 	}
-	// async buyDiamond(req: Request, res: Response): Promise<Response> {
-	// 	try {
-	// 		// Temukan user berdasarkan ID
-	// 		const user = await this.userRepository.findOne({
-	// 			where: { id: res.locals.loginSession.id },
-	// 		});
-	// 		if (!user) {
-	// 			return res
-	// 				.status(400)
-	// 				.json({ success: false, message: "User not found" });
-	// 		}
-
-	// 		// Temukan diamond berdasarkan ID
-	// 		const diamond = await this.diamondRepository.findOne({
-	// 			where: { id: req.body.diamondId },
-	// 		});
-	// 		if (!diamond) {
-	// 			return res
-	// 				.status(400)
-	// 				.json({ success: false, message: "Diamond Package not found" });
-	// 		}
-
-	// 		// Hitung total harga pembelian
-	// 		// const totalCost = user.diamond * diamond.price;
-
-	// 		// Update nilai diamond di tabel User
-	// 		user.diamond += diamond.quantity;
-	// 		await this.userRepository.save(user);
-
-	// 		// Kembalikan user setelah pembelian berhasil
-	// 		return res.status(200).json(user);
-	// 	} catch (error) {
-	// 		console.error("Error buying diamond:", error);
-	// 		return null;
-	// 	}
-	// }
-
 	async buyDiamond(req: Request, res: Response): Promise<Response> {
+		try {
+			// Temukan user berdasarkan ID
+			const user = await this.userRepository.findOne({
+				where: { id: res.locals.loginSession.id },
+			});
+			if (!user) {
+				return res
+					.status(400)
+					.json({ success: false, message: "User not found" });
+			}
+
+			// Temukan diamond berdasarkan ID
+			const diamond = await this.diamondRepository.findOne({
+				where: { id: req.body.diamondId },
+			});
+			if (!diamond) {
+				return res
+					.status(400)
+					.json({ success: false, message: "Diamond Package not found" });
+			}
+
+			// Hitung total harga pembelian
+			// const totalCost = user.diamond * diamond.price;
+
+			// Update nilai diamond di tabel User
+			user.diamond += diamond.quantity;
+			await this.userRepository.save(user);
+
+			// Kembalikan user setelah pembelian berhasil
+			return res.status(200).json(user);
+		} catch (error) {
+			console.error("Error buying diamond:", error);
+			return null;
+		}
+	}
+
+	async buyDiamondMidtrans(req: Request, res: Response): Promise<Response> {
 		try {
 			const user = await this.userRepository.findOne({
 				where: { id: res.locals.loginSession.id },

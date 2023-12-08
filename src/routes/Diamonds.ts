@@ -6,10 +6,11 @@ const DiaRouter = Router();
 
 DiaRouter.get("/diamond", DiamondControllers.viewDiaomondPackage);
 
-DiaRouter.post(
+DiaRouter.patch(
 	"/diamond/buy",
 	Auth.authenticate,
 	DiamondControllers.buyDiamond
 );
 DiaRouter.post("/diamond/callback", DiamondControllers.midtransCallback);
+DiaRouter.post("/diamond/midtrans", DiamondControllers.buyDiamondMidtrans);
 export default DiaRouter;

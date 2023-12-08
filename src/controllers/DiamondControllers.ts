@@ -7,6 +7,10 @@ class DiamondControllers {
 	buyDiamond(req: Request, res: Response) {
 		DiamondServices.buyDiamond(req, res);
 	}
+
+	buyDiamondMidtrans(req: Request, res: Response) {
+		DiamondServices.buyDiamondMidtrans(req, res);
+	}
 	midtransCallback(req: Request, res: Response) {
 		DiamondServices.midtransCallback(req, res);
 	}
