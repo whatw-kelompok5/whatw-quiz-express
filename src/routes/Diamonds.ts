@@ -11,5 +11,5 @@ DiaRouter.post(
 	Auth.authenticate,
 	DiamondControllers.buyDiamond
 );
-
+DiaRouter.post("/diamond/callback", DiamondControllers.midtransCallback);
 export default DiaRouter;
