@@ -6,4 +6,10 @@ const DiaRouter = Router();
 
 DiaRouter.get("/diamond", DiamondControllers.viewDiaomondPackage);
 
+DiaRouter.post(
+	"/diamond/buy",
+	Auth.authenticate,
+	DiamondControllers.buyDiamond
+);
+
 export default DiaRouter;
