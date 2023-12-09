@@ -7,6 +7,7 @@ import {
 	ManyToOne,
 	JoinColumn,
 	ManyToMany,
+	OneToMany,
 } from "typeorm";
 import { Avatar } from "./Avatar";
 
@@ -28,6 +29,9 @@ export class User {
 	})
 	@JoinColumn({ name: "avatarId" })
 	avatar: Avatar;
+
+	// @OneToMany(() => Transaction, (transaction) => transaction.user) // Tambahkan relasi One-to-Many
+	// transactions: Transaction[]; // Tambahkan properti untuk menyimpan transaksi
 
 	@ManyToMany(() => Avatar, (avatar) => avatar.avatar_owners)
 	avatars_owned: Avatar[];

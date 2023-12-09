@@ -2,6 +2,7 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Diamond } from "../entity/Diamond";
 import { User } from "../entity/User";
+import { Transaction } from "../entity/Transaction";
 import { Request, Response } from "express";
 // import { MidtransClient, Transaction } from "midtrans-client";
 import * as midtransClient from "midtrans-client";
@@ -12,6 +13,9 @@ export default new (class DiamondServices {
 
 	private readonly userRepository: Repository<User> =
 		AppDataSource.getRepository(User);
+
+	private readonly transactionRepository: Repository<Transaction> =
+		AppDataSource.getRepository(Transaction);
 
 	private midtransClient = new midtransClient.Snap({
 		clientKey: "SB-Mid-client-2yxSDW9MSfHHPxRd",
@@ -114,6 +118,16 @@ export default new (class DiamondServices {
 				transactionDetails
 			);
 
+			// Save transaction details to the database
+			const newTransaction = this.transactionRepository.create({
+				orderId: transactionDetails.transaction_details.order_id,
+				email: user.email,
+				diamond: diamond.quantity,
+				price: diamond.price,
+				transactionStatus: "settlement"
+			});
+			await this.transactionRepository.save(newTransaction);
+
 			// Redirect the user to the Midtrans payment page
 			return res
 				.status(200)
@@ -128,43 +142,58 @@ export default new (class DiamondServices {
 	async midtransCallback(req: Request, res: Response): Promise<Response> {
 		try {
 			// Handle Midtrans callback data
-			const orderId = req.body.order_id;
-			const transactionStatus = req.body.transaction_status;
+			const orderId = req.body.orderId;
+			const transactionStatus = req.body.transactionStatus;
 
-			// Assuming orderId corresponds to your user's ID or a unique identifier
-			const user = await this.userRepository.findOne({
-				where: { id: orderId },
+			// Find the corresponding transaction in the database
+			const transaction = await this.transactionRepository.findOne({
+				where: { orderId },
 			});
 
-			if (!user) {
+			if (!transaction) {
+				console.error("Transaction not found for orderId:", orderId);
 				return res
-					.status(400)
-					.json({ success: false, message: "User not found" });
+					.status(404)
+					.json({ success: false, message: "Transaction not found" });
 			}
 
+			// Update the transaction status
+			transaction.transactionStatus = transactionStatus;
+
+			// Save the updated transaction to the database
+			await this.transactionRepository.save(transaction);
+
+			// Check if the transaction was successful
 			if (
-				transactionStatus === "capture" ||
-				transactionStatus === "settlement"
+				transactionStatus === 'capture' ||
+				transactionStatus === 'settlement'
 			) {
-				// Transaction is successful, update the user's entity with the ordered diamond
-				const orderedDiamond = req.body.transaction_details.gross_amount;
-				user.diamond += orderedDiamond;
-				await this.userRepository.save(user);
+				// Check if transaction.user and transaction.user.id are defined
+				if (transaction.email) {
+					const user = await this.userRepository.findOne({
+						where: { email: transaction.email },
+					});
 
-				return res
-					.status(200)
-					.json({ success: true, message: "Transaction successful" });
-			} else if (transactionStatus === "deny") {
-				// Transaction is denied, handle accordingly
-				return res
-					.status(200)
-					.json({ success: false, message: "Transaction denied" });
-			} else {
-				// Transaction is in an unknown status, handle accordingly
-				return res
-					.status(200)
-					.json({ success: false, message: "Unknown transaction status" });
+					if (user) {
+						user.diamond += transaction.diamond;
+						await this.userRepository.save(user);
+					} else {
+						console.error(
+							"User not found for transaction:",
+							transaction.id
+						);
+					}
+				} else {
+					console.error(
+						"Transaction user or user id is undefined:",
+						transaction
+					);
+				}
 			}
+
+			return res
+				.status(200)
+				.json({ success: true, message: "Callback handled successfully" });
 		} catch (error) {
 			console.error("Error handling Midtrans callback:", error);
 			return res
