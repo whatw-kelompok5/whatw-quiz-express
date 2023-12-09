@@ -124,7 +124,7 @@ export default new (class DiamondServices {
 				email: user.email,
 				diamond: diamond.quantity,
 				price: diamond.price,
-				transactionStatus: "settlement"
+				transactionStatus: "pending"
 			});
 			await this.transactionRepository.save(newTransaction);
 
@@ -168,7 +168,6 @@ export default new (class DiamondServices {
 				transactionStatus === 'capture' ||
 				transactionStatus === 'settlement'
 			) {
-				// Check if transaction.user and transaction.user.id are defined
 				if (transaction.email) {
 					const user = await this.userRepository.findOne({
 						where: { email: transaction.email },
