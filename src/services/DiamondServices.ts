@@ -168,7 +168,6 @@ export default new (class DiamondServices {
 				transactionStatus === 'capture' ||
 				transactionStatus === 'settlement'
 			) {
-				if (transaction.email) {
 					const user = await this.userRepository.findOne({
 						where: { email: transaction.email },
 					});
@@ -182,12 +181,6 @@ export default new (class DiamondServices {
 							transaction.id
 						);
 					}
-				} else {
-					console.error(
-						"Transaction user or user id is undefined:",
-						transaction
-					);
-				}
 			}
 
 			return res
