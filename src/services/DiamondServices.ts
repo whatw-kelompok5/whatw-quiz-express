@@ -6,6 +6,7 @@ import { Transaction } from "../entity/Transaction";
 import { Request, Response } from "express";
 // import { MidtransClient, Transaction } from "midtrans-client";
 import * as midtransClient from "midtrans-client";
+import Env from "../utils/Env/Env";
 
 export default new (class DiamondServices {
 	private readonly diamondRepository: Repository<Diamond> =
@@ -18,8 +19,8 @@ export default new (class DiamondServices {
 		AppDataSource.getRepository(Transaction);
 
 	private midtransClient = new midtransClient.Snap({
-		clientKey: "SB-Mid-client-2yxSDW9MSfHHPxRd",
-		serverKey: "SB-Mid-server-3mi0pq2O0MesF3jHIStaVVTo",
+		clientKey: Env.MIDTRANS_CLIENT_KEY,
+		serverKey: Env.MIDTRANS_SERVER_KEY,
 		isProduction: false, // Set to true for the production environment
 	});
 
@@ -52,9 +53,6 @@ export default new (class DiamondServices {
 					.status(400)
 					.json({ success: false, message: "Diamond Package not found" });
 			}
-
-			// Hitung total harga pembelian
-			// const totalCost = user.diamond * diamond.price;
 
 			// Update nilai diamond di tabel User
 			user.diamond += diamond.quantity;
@@ -124,7 +122,7 @@ export default new (class DiamondServices {
 				email: user.email,
 				diamond: diamond.quantity,
 				price: diamond.price,
-				transactionStatus: "pending"
+				transactionStatus: "pending",
 			});
 			await this.transactionRepository.save(newTransaction);
 
@@ -165,22 +163,19 @@ export default new (class DiamondServices {
 
 			// Check if the transaction was successful
 			if (
-				transactionStatus === 'capture' ||
-				transactionStatus === 'settlement'
+				transactionStatus === "capture" ||
+				transactionStatus === "settlement"
 			) {
-					const user = await this.userRepository.findOne({
-						where: { email: transaction.email },
-					});
+				const user = await this.userRepository.findOne({
+					where: { email: transaction.email },
+				});
 
-					if (user) {
-						user.diamond += transaction.diamond;
-						await this.userRepository.save(user);
-					} else {
-						console.error(
-							"User not found for transaction:",
-							transaction.id
-						);
-					}
+				if (user) {
+					user.diamond += transaction.diamond;
+					await this.userRepository.save(user);
+				} else {
+					console.error("User not found for transaction:", transaction.id);
+				}
 			}
 
 			return res

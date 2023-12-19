@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { createUserSchema } from "../utils/validator/Validate";
 import * as jwt from "jsonwebtoken";
 import { Avatar } from "../entity/Avatar";
+import Env from "../utils/Env/Env";
 
 class UserServices {
 	private readonly UserRepository: Repository<User> =
@@ -85,7 +86,7 @@ class UserServices {
 			// 	email: email,
 			// });
 
-			const token = jwt.sign({ id: userSelected.id }, "whatw-quiz", {
+			const token = jwt.sign({ id: userSelected.id }, Env.JWT_SECRET, {
 				expiresIn: "1d",
 			});
 
